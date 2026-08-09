@@ -1,0 +1,266 @@
+/* ============================================================
+   SPACE INVADERS — retro CRT arcade styling
+   Palette: phosphor green #33ff66 / amber #ffb000 / alert #ff3355
+   Type: Press Start 2P (bitmap arcade font)
+   ============================================================ */
+
+:root {
+  --green: #33ff66;
+  --green-dim: #0f5c28;
+  --amber: #ffb000;
+  --red: #ff3355;
+  --black: #020604;
+  --bezel: #111512;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--black);
+  overflow: hidden;
+  /* オフライン動作のため外部Webフォントは使わず、端末内蔵の等幅フォントでレトロ感を出す */
+  font-family: 'Courier New', 'SF Mono', 'Menlo', ui-monospace, monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--green);
+  touch-action: none;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+}
+
+/* ---------- CRT screen ---------- */
+
+#crt {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  height: min(100vh, 100vw * 9 / 16);
+  width: min(100vw, 100vh * 16 / 9);
+  background: var(--black);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 2px #000,
+    0 0 0 10px var(--bezel),
+    0 0 40px 6px rgba(51, 255, 102, 0.15),
+    inset 0 0 60px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.0) 0px,
+    rgba(0, 0, 0, 0.18) 1px,
+    rgba(0, 0, 0, 0.0) 2px
+  );
+  mix-blend-mode: multiply;
+  animation: flicker 6s infinite;
+}
+
+#vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 62%, rgba(0,0,0,0.4) 100%);
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+}
+
+/* ---------- HUD ---------- */
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  font-size: clamp(8px, 1.6vw, 14px);
+  color: var(--green);
+  text-shadow: 0 0 6px var(--green);
+  line-height: 1.5;
+}
+
+#hud > div {
+  position: absolute;
+  padding: 10px 14px;
+}
+
+#hud-score { top: 0; left: 0; text-align: left; }
+#hud-hi { top: 0; right: 0; text-align: right; color: var(--amber); text-shadow: 0 0 6px var(--amber); }
+#hud-level { bottom: 0; left: 0; }
+#hud-lives { bottom: 0; right: 0; }
+
+#mute-btn {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  width: clamp(28px, 6vw, 38px);
+  height: clamp(28px, 6vw, 38px);
+  border-radius: 6px;
+  background: rgba(51, 255, 102, 0.08);
+  border: 2px solid var(--green);
+  color: var(--green);
+  text-shadow: 0 0 6px var(--green);
+  font-family: inherit;
+  font-size: clamp(11px, 2vw, 15px);
+  cursor: pointer;
+  padding: 0;
+}
+#mute-btn:active { background: rgba(51, 255, 102, 0.25); }
+
+#score-val, #hi-val { font-size: 1.3em; }
+
+/* ---------- Overlay screens ---------- */
+
+.overlay-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  background: rgba(2, 6, 4, 0.88);
+  padding: 20px;
+}
+
+.overlay-screen.hidden { display: none; }
+
+.overlay-screen h1 {
+  font-size: clamp(20px, 5.5vw, 40px);
+  line-height: 1.6;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.overlay-screen h2 {
+  font-size: clamp(16px, 4vw, 28px);
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.glow { color: var(--green); text-shadow: 0 0 10px var(--green), 0 0 24px var(--green); }
+.glow.red { color: var(--red); text-shadow: 0 0 10px var(--red), 0 0 24px var(--red); }
+
+.overlay-screen p {
+  font-size: clamp(8px, 2vw, 12px);
+  margin: 0;
+  line-height: 1.8;
+}
+
+.hint-block {
+  margin-top: 10px;
+  color: var(--amber);
+  text-shadow: 0 0 6px var(--amber);
+  font-size: clamp(6px, 1.5vw, 10px);
+}
+
+.blink { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Touch controls ---------- */
+
+#touch-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  display: none;
+}
+
+body.touch-mode #touch-controls {
+  display: block;
+}
+
+.touch-zone {
+  position: absolute;
+  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  pointer-events: auto;
+}
+
+#joystick-zone { left: 4%; width: 42%; height: 40%; display: flex; align-items: flex-end; }
+#fire-zone { right: 4%; width: 30%; height: 40%; display: flex; align-items: flex-end; justify-content: center; }
+
+/* 横移動専用なので、丸ではなく横長のスライダー型にする */
+#joystick-base {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: clamp(130px, 30vw, 200px);
+  height: clamp(48px, 11vw, 70px);
+  border-radius: 999px;
+  background: rgba(51, 255, 102, 0.06);
+  border: 2px solid rgba(51, 255, 102, 0.35);
+  box-shadow: 0 0 16px rgba(51, 255, 102, 0.15);
+}
+
+#joystick-stick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(36px, 9vw, 50px);
+  height: clamp(36px, 9vw, 50px);
+  border-radius: 50%;
+  background: rgba(51, 255, 102, 0.5);
+  box-shadow: 0 0 14px rgba(51, 255, 102, 0.8);
+  transform: translate(-50%, -50%);
+  transition: background 0.1s;
+}
+
+#fire-button {
+  width: clamp(66px, 18vw, 110px);
+  height: clamp(66px, 18vw, 110px);
+  border-radius: 50%;
+  background: rgba(255, 51, 85, 0.12);
+  border: 2px solid rgba(255, 51, 85, 0.5);
+  box-shadow: 0 0 16px rgba(255, 51, 85, 0.2);
+  color: var(--red);
+  text-shadow: 0 0 8px var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px, 2.4vw, 15px);
+}
+
+#fire-button.active {
+  background: rgba(255, 51, 85, 0.35);
+  box-shadow: 0 0 26px rgba(255, 51, 85, 0.5);
+}
+
+/* 縦・横どちらの向きでも遊べる。#crt が常に16:9を保ってビューポートに
+   フィットするため、縦持ちでは自動的にレターボックス表示になり、
+   タッチ操作(#touch-controls)は画面下部に残る。 */

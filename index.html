@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>SPACE INVADERS</title>
+
+<!-- オフライン対応: 外部フォントは使わず、外部通信ゼロで完全に動作する -->
+
+<!-- PWA (ホーム画面に追加してアプリ化するための設定) -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020604">
+<link rel="icon" href="icons/favicon-32.png">
+
+<!-- iOS Safari: ホーム画面に追加した際に全画面のアプリ風に起動させる設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Invaders">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- CRTフレーム＋ゲーム画面 -->
+  <div id="crt">
+    <canvas id="game" width="960" height="540"></canvas>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+  </div>
+
+  <!-- HUD (スコア・ライフ) -->
+  <div id="hud">
+    <div id="hud-score">SCORE<br><span id="score-val">0</span></div>
+    <div id="hud-hi">HI-SCORE<br><span id="hi-val">0</span></div>
+    <div id="hud-level">WAVE <span id="level-val">1</span></div>
+    <div id="hud-lives">LIVES <span id="lives-val">▲▲▲</span></div>
+    <button id="mute-btn" aria-label="サウンドのオン/オフ">♪</button>
+  </div>
+
+  <!-- タイトル画面 -->
+  <div id="screen-title" class="overlay-screen">
+    <h1 class="glow">SPACE<br>INVADERS</h1>
+    <p class="blink">PRESS SPACE / TAP TO START</p>
+    <div class="hint-block">
+      <p>PC: ← → 移動　SPACE 攻撃　P 一時停止</p>
+      <p>MOBILE: 左スティックで移動　右ボタンで攻撃</p>
+    </div>
+  </div>
+
+  <!-- 一時停止画面 -->
+  <div id="screen-pause" class="overlay-screen hidden">
+    <h2 class="glow">PAUSED</h2>
+    <p class="blink">PRESS P / TAP TO RESUME</p>
+  </div>
+
+  <!-- ウェーブクリア画面 -->
+  <div id="screen-wave" class="overlay-screen hidden">
+    <h2 class="glow">WAVE CLEAR</h2>
+    <p id="wave-next-text"></p>
+  </div>
+
+  <!-- ゲームオーバー画面 -->
+  <div id="screen-gameover" class="overlay-screen hidden">
+    <h2 class="glow red">GAME OVER</h2>
+    <p id="final-score-text"></p>
+    <p class="blink">PRESS SPACE / TAP TO RETRY</p>
+  </div>
+
+  <!-- タッチコントロール -->
+  <div id="touch-controls">
+    <div id="joystick-zone" class="touch-zone">
+      <div id="joystick-base">
+        <div id="joystick-stick"></div>
+      </div>
+    </div>
+    <div id="fire-zone" class="touch-zone">
+      <div id="fire-button">FIRE</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="game.js"></script>
+<script>
+  // Service Workerを登録(対応環境のみ、オフラインキャッシュを有効化)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
